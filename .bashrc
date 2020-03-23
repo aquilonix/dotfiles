@@ -36,9 +36,6 @@ source $GOPATH/src/github.com/tomnomnom/gf/gf-completion.bash
 
 ## export
 export TERM=xterm-256color
-export findomain_fb_token="417214048996312|mQL98eKGkoR6-cOLME360E8OZbM"
-export findomain_spyse_token="MFbuz0wkHZX9qfKrfnVfdXmgfFgWvm6q"
-export VariableName="26f963a7ffa28bf3e16a0783b07bea8cbb8b07e12ec2e04903e422a1beda123b"
 export EDITOR=/usr/bin/vim
 
 ## tools
