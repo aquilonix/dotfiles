@@ -1,4 +1,4 @@
-#
+
 # ~/.bashrc
 #
 
@@ -39,6 +39,10 @@ export TERM=xterm-256color
 export EDITOR=/usr/bin/vim
 
 ## tools
+grabrepo(){
+curl -s  https://api.github.com/search/repositories?q=$1 | jq .items | grep git_url | awk -F'/' '{print $3":"$4"/"$5}'| sed 's/\",//g' | xargs -n1 -I{} echo "git@{}"
+}
+
 profile(){
 vim ~/.bashrc
 }
