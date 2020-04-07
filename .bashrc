@@ -1,17 +1,36 @@
-
+#
 # ~/.bashrc
 #
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+if [ -f /usr/share/bash-completion/bash_completion ] && ! shopt -oq posix; then
+    . /usr/share/bash-completion/bash_completion
+fi
+ 
+# History control
+HISTCONTROL=ignoredups:ignorespace
+HISTSIZE=100000
+HISTFILESIZE=2000000
+shopt -s histappend
+
 #~~~ aliases ~~~#
+alias ll='ls -la'
+alias pac='sudo pacman'
 alias grep='grep --color=auto'
-alias pac="sudo pacman"
+alias :q="exit"
 alias SS="sudo systemctl"
 alias v="vim"
 alias sv="sudo vim"
 alias ls='ls --color=auto'
+alias svm='sudo virt-manager'
+alias tx='tmux'
+alias aqx='cd ~/src/github.com/aquilonix'
+alias sqlmap='python ~/tools/sqlmap/sqlmap.py'
+alias burp='java -noverify -Dpython.cachedir=/tmp -Xbootclasspath/p:/home/aquilonix/tools/BurpSuitePro/core/burp1.7/BurpSuite-Keygen.jar -jar /home/aquilonix/tools/BurpSuitePro/core/burp1.7/BurpSuite-Pro-v1.7.37.jar'
+alias hackthebox='sudo openvpn ~/hackthebox/aquilonix.ovpn'
+alias py='python3.8'
 #PS1='[\u@\h \W]\$ '
 
 #~~~~wordpress instance~~~#
@@ -24,23 +43,35 @@ reconbox(){
 ssh aquilonix
 }
 
-#~~~~ git repo ~~~#
-gitrep(){
-eval `ssh-agent`
-ssh-add ~/.ssh/Jhan\ Thng
-}
 
 ##source
 source $GOPATH/src/github.com/tomnomnom/gf/gf-completion.bash
 
-
 ## export
 export TERM=xterm-256color
+export findomain_fb_token="417214048996312|mQL98eKGkoR6-cOLME360E8OZbM"
+export findomain_spyse_token="MFbuz0wkHZX9qfKrfnVfdXmgfFgWvm6q"
+export VariableName="26f963a7ffa28bf3e16a0783b07bea8cbb8b07e12ec2e04903e422a1beda123b"
 export EDITOR=/usr/bin/vim
 
 ## tools
-grabrepo(){
+mscan(){ #runs masscan
+sudo masscan -p4443,2075,2076,6443,3868,3366,8443,8080,9443,9091,3000,8000,5900,8081,6000,10000,8181,3306,5000,4000,8888,5432,15672,9999,161,4044,7077,4040,9000,8089,443,744 $1
+}
+
+jsparser(){
+python2 /home/aquilonix/tools/JSParser/handler.py
+}
+
+dirsearch(){
+python ~/tools/dirsearch/dirsearch.py -u $1 -e $2 -t 50 -b
+}
+gr(){
 curl -s  https://api.github.com/search/repositories?q=$1 | jq .items | grep git_url | awk -F'/' '{print $3":"$4"/"$5}'| sed 's/\",//g' | xargs -n1 -I{} echo "git@{}"
+}
+
+txc(){
+tmux attach-session -t $1
 }
 
 profile(){
@@ -51,18 +82,8 @@ sprofile(){
 source ~/.bashrc
 }
 
-fd(){
-findomain  -t $1 -o
-}
-
 crtsh(){
 curl -s https://crt.sh/?Identity=%.$1 | grep ">*.$1" | sed 's/<[/]*[TB][DR]>/\n/g' | grep -vE "<|^[\*]*[\.]*$1" | sort -u | awk 'NF'
-}
-
-dirsearch(){
-cd ~/tools/dirsearch*
-python3 dirsearch.py -u $1 -e $2 -t 200 -x 400,404,500 -w $3
-cd ~/
 }
 
 am(){
@@ -70,17 +91,16 @@ amass enum -passive -d $1 -json $1.json
 jq .name $1.json | sed "s/\"//g"| httprobe -c 60 | tee -a $1-domain.txt
 }
 
-xmind(){
-/home/aquilonix/Xmind/XMind_amd64/XMind &
-}
-
-burp(){
-java -noverify -Dpython.cachedir=/tmp -Xbootclasspath/p:/home/aquilonix/tools/BurpSuitePro/core/burp1.7/BurpSuite-Keygen.jar -jar /home/aquilonix/tools/BurpSuitePro/core/burp1.7/BurpSuite-Pro-v1.7.37.jar
+bp(){
+burp & exit
 } 
 
-# 'Safe' version of __git_ps1 to avoid errors on systems that don't have it
-function gitPrompt {
-  command -v __git_ps1 > /dev/null && __git_ps1 " (%s)"
+s3ls(){
+aws s3 ls s3://$1
+}
+
+s3cp(){
+aws s3 cp $2 s3://$1
 }
 
 # Colours have names too. Stolen from Arch wiki
@@ -132,5 +152,31 @@ if [ "${UID}" -eq "0" ]; then
   nameC="${txtred}"
 fi
 
-# Patent Pending Prompt
+gitPrompt() {
+    git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+
+#Patent Pending Prompt
 export PS1="${nameC}\u${atC}@${hostC}\h:${pathC}\w${gitC}\$(gitPrompt)${pointerC}▶${normalC} "
+
+#set up ssh-agent
+SSH_ENV="$HOME/.ssh/environment"
+
+function start_agent {
+    echo "Initializing new SSH agent"
+    touch $SSH_ENV
+    chmod 600 "${SSH_ENV}"
+    /usr/bin/ssh-agent | sed 's/^echo/#echo/' >> "${SSH_ENV}"
+    . "${SSH_ENV}" > /dev/null
+    /usr/bin/ssh-add
+}
+
+# source SSH settings, if applicable
+if [ -f "${SSH_ENV}" ]; then
+    . "${SSH_ENV}" > /dev/null
+    kill -0 $SSH_AGENT_PID 2>/dev/null || {
+        start_agent
+        }
+    else
+        start_agent
+fi
