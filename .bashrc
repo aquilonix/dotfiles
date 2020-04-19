@@ -52,10 +52,10 @@ source $GOPATH/src/github.com/tomnomnom/gf/gf-completion.bash
 ## export
 export GO111MODULE=on
 export TERM=xterm-256color
-export findomain_fb_token="417214048996312|mQL98eKGkoR6-cOLME360E8OZbM"
-export findomain_spyse_token="MFbuz0wkHZX9qfKrfnVfdXmgfFgWvm6q"
-export VariableName="26f963a7ffa28bf3e16a0783b07bea8cbb8b07e12ec2e04903e422a1beda123b"
-export GITROB_ACCESS_TOKEN=c7e3fc794833a248ffe8579f8a5b87b76802504b
+export findomain_fb_token=""
+export findomain_spyse_token=""
+export VariableName=""
+export GITROB_ACCESS_TOKEN=
 export EDITOR=/usr/bin/vim
 
 ## tools
