@@ -16,6 +16,7 @@ HISTFILESIZE=2000000
 shopt -s histappend
 
 #~~~ aliases ~~~#
+alias d='ddgr'
 alias ll='ls -la'
 alias pac='sudo pacman'
 alias grep='grep --color=auto'
@@ -30,7 +31,9 @@ alias aqx='cd ~/src/github.com/aquilonix'
 alias sqlmap='python ~/tools/sqlmap/sqlmap.py'
 alias burp='java -noverify -Dpython.cachedir=/tmp -Xbootclasspath/p:/home/aquilonix/tools/BurpSuitePro/core/burp1.7/BurpSuite-Keygen.jar -jar /home/aquilonix/tools/BurpSuitePro/core/burp1.7/BurpSuite-Pro-v1.7.37.jar'
 alias hackthebox='sudo openvpn ~/hackthebox/aquilonix.ovpn'
-alias py='python3.8'
+alias python='python3.8'
+alias pip='pip3'
+alias linkfinder='python /home/aquilonix/tools/LinkFinder/linkfinder.py'
 #PS1='[\u@\h \W]\$ '
 
 #~~~~wordpress instance~~~#
@@ -46,15 +49,27 @@ ssh aquilonix
 
 ##source
 source $GOPATH/src/github.com/tomnomnom/gf/gf-completion.bash
-
 ## export
+export GO111MODULE=on
 export TERM=xterm-256color
-export findomain_fb_token=""
-export findomain_spyse_token=""
-export VariableName=""
+export findomain_fb_token="417214048996312|mQL98eKGkoR6-cOLME360E8OZbM"
+export findomain_spyse_token="MFbuz0wkHZX9qfKrfnVfdXmgfFgWvm6q"
+export VariableName="26f963a7ffa28bf3e16a0783b07bea8cbb8b07e12ec2e04903e422a1beda123b"
+export GITROB_ACCESS_TOKEN=c7e3fc794833a248ffe8579f8a5b87b76802504b
 export EDITOR=/usr/bin/vim
 
 ## tools
+apklink(){
+apktool d $1.apk; cd $1; mkdir collection; find . -name \*.smali |xargs -n1 -I{} sh -c "cp {} collection/\$(head /dev/urandom | md5 cut -d' ' -f1).smali" \;;linkfinder -i 'collection/*.smali - cli'
+}
+
+scp2remote(){
+scp -r -i ~/.ssh/droplet $HOME/$1 aquilonix@178.128.102.110:$HOME/$2 
+}
+
+scp2local(){
+scp -r -i ~/.ssh/droplet aquilonix@178.128.102.110:$HOME/$1 $HOME/$2
+}
 mscan(){ #runs masscan
 sudo masscan -p4443,2075,2076,6443,3868,3366,8443,8080,9443,9091,3000,8000,5900,8081,6000,10000,8181,3306,5000,4000,8888,5432,15672,9999,161,4044,7077,4040,9000,8089,443,744 $1
 }
